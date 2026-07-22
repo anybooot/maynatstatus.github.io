@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maynat Network | Status</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #030303;
+            background-image: radial-gradient(circle at 50% 50%, #0a1a2a 0%, #030303 100%);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        h1 {
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #009dff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Linkuri rapide (carduri custom) --- */
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 18px;
+            margin-bottom: 50px;
+        }
+
+        .quick-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 12px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            min-height: 100px;
+            cursor: pointer;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .quick-card .icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .quick-card .label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Designuri specifice */
+        .card-minecraft {
+            background: linear-gradient(145deg, #1a3a2a, #0d2618);
+            border-color: #3a8a5a;
+        }
+        .card-minecraft:hover {
+            border-color: #5cffa0;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.25);
+        }
+
+        .card-discord {
+            background: linear-gradient(145deg, #2c2f6b, #1a1d3d);
+            border-color: #5865f2;
+        }
+        .card-discord:hover {
+            border-color: #8a96ff;
+            box-shadow: 0 0 25px rgba(88, 101, 242, 0.35);
+        }
+
+        .card-tiktok {
+            background: linear-gradient(145deg, #1f1f1f, #0d0d0d);
+            border-color: #25f4ee;
+        }
+        .card-tiktok:hover {
+            border-color: #fe2c55;
+            box-shadow: 0 0 25px rgba(254, 44, 85, 0.3);
+        }
+
+        .card-store {
+            background: linear-gradient(145deg, #3d2a1a, #26180d);
+            border-color: #f5a623;
+        }
+        .card-store:hover {
+            border-color: #ffcc44;
+            box-shadow: 0 0 25px rgba(245, 166, 35, 0.3);
+        }
+
+        /* --- Group titles --- */
+        .group-title {
+            margin-bottom: 16px;
+            font-weight: 500;
+            color: #888;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .group-title:not(:first-of-type) {
+            margin-top: 44px;
+        }
+
+        /* --- Cards de status (păstrate) --- */
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #009dff;
+            background: rgba(0, 157, 255, 0.03);
+            transform: translateX(5px);
+        }
+
+        .card .name {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .card .url {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 3px;
+            display: block;
+        }
+
+        .status {
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .online {
+            background: #004a29;
+            color: #00ff88;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.15);
+        }
+
+        .offline {
+            background: #4a1919;
+            color: #ff4d4d;
+        }
+
+        .checking {
+            background: #222;
+            color: #aaa;
+        }
+
+        /* --- Notificare custom (toast) --- */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0e1a1e;
+            border: 1px solid #00ff88;
+            border-radius: 12px;
+            padding: 16px 28px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 255, 136, 0.15);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+            transform: translateX(-50%) translateY(-20px);
+            min-width: 260px;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast .toast-icon {
+            font-size: 1.6rem;
+        }
+
+        .toast .toast-msg {
+            flex: 1;
+        }
+
+        .toast .toast-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.2rem;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: color 0.2s;
+        }
+
+        .toast .toast-close:hover {
+            color: #fff;
+        }
+
+        /* Progress bar pentru notificare */
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #00ff88;
+            width: 100%;
+            border-radius: 0 0 12px 12px;
+            animation: shrink 3s linear forwards;
+        }
+
+        @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .quick-links {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .quick-card {
+                min-height: 80px;
+                padding: 14px 8px;
+            }
+            .quick-card .icon {
+                font-size: 1.8rem;
+            }
+            .card {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .card .name {
+                font-size: 0.95rem;
+            }
+            .toast {
+                min-width: 200px;
+                padding: 14px 18px;
+                font-size: 0.85rem;
+                top: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>MAYNAT STATUS</h1>
+
+        <!-- Linkuri rapide -->
+        <div class="quick-links">
+            <a href="#" class="quick-card card-minecraft" id="copy-ip-btn">
+                <span class="icon">⛏️</span>
+                <span>IP: maynat.eu</span>
+                <span class="label">Server Minecraft</span>
+            </a>
+            <a href="https://discord.maynat.eu" target="_blank" class="quick-card card-discord">
+                <span class="icon">💬</span>
+                <span>Discord</span>
+                <span class="label">Comunitate</span>
+            </a>
+            <a href="https://tiktok.com/@maynat.ct.ws" target="_blank" class="quick-card card-tiktok">
+                <span class="icon">🎵</span>
+                <span>TikTok</span>
+                <span class="label">@maynat.ct.ws</span>
+            </a>
+            <a href="https://store.maynat.eu" target="_blank" class="quick-card card-store">
+                <span class="icon">🛒</span>
+                <span>Magazin</span>
+                <span class="label">Store</span>
+            </a>
+        </div>
+
+        <!-- SECȚIUNI DE STATUS -->
+        <div class="group-title">SERVERE MINECRAFT</div>
+        <div id="mc-container"></div>
+
+        <div class="group-title">SERVICII WEB</div>
+        <div id="web-container"></div>
+    </div>
+
+    <!-- Notificare Toast (ascunsă inițial) -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✅</span>
+        <span class="toast-msg" id="toast-msg">IP copiat!</span>
+        <button class="toast-close" id="toast-close">&times;</button>
+        <div class="toast-progress" id="toast-progress"></div>
+    </div>
+
+    <script>
+        // --- Date pentru statusuri ---
+        const mc = [{ name: "Server Principal", ip: "maynat.eu" }];
+        const web = [
+            { name: "Website", url: "https://maynat.ct.ws" },
+            { name: "Hosting", url: "https://maynathosting.ct.ws" },
+            { name: "Discord", url: "https://discord.maynat.eu" },
+            { name: "Magazin", url: "https://store.maynat.eu" }
+        ];
+
+        // --- Funcție pentru notificare ---
+        function showToast(message, icon = '✅') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            const iconEl = toast.querySelector('.toast-icon');
+            const progress = document.getElementById('toast-progress');
+
+            // Setăm conținut
+            iconEl.textContent = icon;
+            msgEl.textContent = message;
+
+            // Resetăm animația progress
+            progress.style.animation = 'none';
+            // Forțăm reflow
+            void progress.offsetWidth;
+            progress.style.animation = 'shrink 3s linear forwards';
+
+            // Afișăm
+            toast.classList.add('show');
+
+            // Eliminăm timeout anterior dacă există
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+
+            // Ascundem după 3 secunde
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- Eveniment pentru copiere IP ---
+        document.getElementById('copy-ip-btn').addEventListener('click', function(e) {
+            e.preventDefault(); // prevenim navigarea (href="#")
+
+            const ip = 'maynat.eu';
+            navigator.clipboard.writeText(ip).then(() => {
+                showToast('IP-ul a fost copiat!', '📋');
+            }).catch(() => {
+                // Fallback: folosim metoda veche
+                const textarea = document.createElement('textarea');
+                textarea.value = ip;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('IP-ul a fost copiat!', '📋');
+                } catch {
+                    showToast('Nu s-a putut copia IP-ul.', '❌');
+                }
+                document.body.removeChild(textarea);
+            });
+        });
+
+        // --- Închidere manuală notificare ---
+        document.getElementById('toast-close').addEventListener('click', function() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('show');
+            if (window.toastTimeout) {
+                clearTimeout(window.toastTimeout);
+                window.toastTimeout = null;
+            }
+        });
+
+        // --- Încărcare statusuri ---
+        function createCardHTML(name, detail, id) {
+            return `<div class="card" id="${id}">
+                        <div><span class="name">${name}</span><span class="url">${detail}</span></div>
+                        <div class="status checking">Se verifică...</div>
+                    </div>`;
+        }
+
+        async function loadStatus() {
+            const mcCont = document.getElementById('mc-container');
+            const webCont = document.getElementById('web-container');
+
+            // Inițializare carduri
+            mc.forEach((s, i) => mcCont.innerHTML += createCardHTML(s.name, s.ip, `mc-${i}`));
+            web.forEach((s, i) => webCont.innerHTML += createCardHTML(s.name, s.url.replace('https://',''), `web-${i}`));
+
+            // Status Minecraft
+            for (let i in mc) {
+                try {
+                    const res = await fetch(`https://api.mcsrvstat.us/2/${mc[i].ip}`).then(r => r.json());
+                    const el = document.getElementById(`mc-${i}`).querySelector('.status');
+                    el.className = `status ${res.online ? 'online' : 'offline'}`;
+                    el.innerText = res.online ? 'Online' : 'Offline';
+                } catch {
+                    const el = document.getElementById(`mc-${i}`).querySelector('.status');
+                    el.className = 'status offline';
+                    el.innerText = 'Eroare';
+                }
+            }
+
+            // Status Web
+            for (let i in web) {
+                const el = document.getElementById(`web-${i}`).querySelector('.status');
+                try {
+                    const resp = await fetch(web[i].url, { mode: 'no-cors' });
+                    el.className = 'status online';
+                    el.innerText = 'Online';
+                } catch {
+                    el.className = 'status offline';
+                    el.innerText = 'Offline';
+                }
+            }
+        }
+
+        loadStatus();
+    </script>
+</body>
+</html>
